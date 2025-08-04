@@ -1,0 +1,30 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build glfw app",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "main.cpp",
+        "module/src/glad.c",
+        "-Imodule/include",
+        "-Lmodule/lib",
+        "-lglfw3",
+        "-lopengl32",
+        "-lgdi32",
+        "-luser32",
+        "-o", "build/app.exe"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+
+       "problemMatcher": ["$gcc"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    }
+  ]
+}
