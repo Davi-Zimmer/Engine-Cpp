@@ -5,6 +5,7 @@
 #include <thread>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "Canvas2D.h"
 
 class Engine {
 
@@ -16,6 +17,8 @@ class Engine {
 
         float fpsCounter;
         int framesRendered;
+
+        Canvas2D ctx;
 
         
         std::chrono::_V2::system_clock::time_point lastTime;
@@ -29,19 +32,6 @@ class Engine {
 
         void frameSkipper( GLFWwindow* window );
 
-        void renderConstructor();
-
         void render( GLFWwindow* window );
         
-        void setupGeometry();
-
-        void setVAO(unsigned int vao);
-        void setShader(unsigned int shader);
-        unsigned int getVAO() const;
-        unsigned int getShader() const;
-
-    private:
-        unsigned int VAO = 0;
-        unsigned int VBO = 0;
-        unsigned int shaderProgram = 0;
 };
