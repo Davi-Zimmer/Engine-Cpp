@@ -7,15 +7,16 @@
 class Window {
     public:
     
-        static void FramebufferCallback(GLFWwindow* window, int width, int height);
+
+        Engine engine;
 
         GLFWwindow* window;
 
-        Window();
+        Window( Engine eng );
 
         GLFWwindow* createWindow( int width, int height, const char* windowName );
         
         // void loop( std::function<void()> callback );
-        void startLoop( Engine engine );
-
+        void startLoop();
+        void onResize(GLFWwindow* window, int width, int height);
 };

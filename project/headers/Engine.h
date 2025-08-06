@@ -20,7 +20,6 @@ class Engine {
 
         Canvas2D ctx;
 
-        
         std::chrono::_V2::system_clock::time_point lastTime;
         std::chrono::_V2::system_clock::time_point fpsTimer;
 
@@ -34,4 +33,5 @@ class Engine {
 
         void render( GLFWwindow* window );
         
+        void windowResized( GLFWwindow* window, int width, int height );
 };
