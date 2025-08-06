@@ -14,7 +14,7 @@ Engine::Engine(){
     framesRendered = 0;
 
     ctx = Canvas2D();
-
+    
 }
 
 int Engine::setFpsTarget( int fps )
@@ -47,6 +47,8 @@ void Engine::frameSkipper( GLFWwindow* window )
         accumulator += delta.count();
         fpsCounter += delta.count();
 
+        render( window );
+
         // FPS real
         if (fpsCounter >= 1.0f) {
             // std::cout << "FPS: " << framesRendered << std::endl;
@@ -60,17 +62,15 @@ void Engine::frameSkipper( GLFWwindow* window )
             framesRendered++;
         }
         
-        render( window );
-
     }
 
 }
 
 void Engine::render( GLFWwindow* window ){
-    glClear(GL_COLOR_BUFFER_BIT);
+    ctx.renderConfigs( window );
+}
 
-    ctx.render();
-
-    glfwSwapBuffers(window);
-    glfwPollEvents();
+void Engine::windowResized( GLFWwindow* window, int width, int height ){
+    ctx.setCanvasSize( width, height );
+    
 }

@@ -8,6 +8,7 @@
 #include <functional>
 #include "headers/Engine.h"
 #include "headers/Interpreter.h"
+#include "headers/Canvas2D.h"
 
 
 std::vector<std::string> splitCommand( const std::string& stringCommand ) {
@@ -41,9 +42,14 @@ void printLine(T line) {
     std::cout << line << std::endl;
 }
 
-Interpreter::Interpreter( Engine e, GLFWwindow* wGl ){
+
+
+
+Interpreter::Interpreter( Engine e, GLFWwindow* wGl, Canvas2D canvas ){
     engine = e;
     winGL = wGl;
+    ctx = canvas;
+
 }
 
 void Interpreter::getFps(){
@@ -112,7 +118,43 @@ Interpreter::
 */
 
 
+void Interpreter::moveObj( std::vector< std::string > args ){
 
+
+    if( args.size() < 3) {
+        std::cout << ctx.xxx << " " << ctx.yyy << "\n";
+        printLine( "Precisa de 2 parametros" );
+        return;
+    }
+
+    int x = std::stoi( args[1] );
+    int y = std::stoi( args[2] );
+    
+    ctx.xxx = x;
+    ctx.yyy = y;
+
+    std::cout << ctx.xxx << " " << ctx.yyy << "\n";
+
+}
+
+
+void Interpreter::resizeeObj( std::vector< std::string > args ){
+
+    if( args.size() < 3) {
+        std::cout << ctx.www << " " << ctx.hhh << "\n";
+
+        printLine( "Precisa de 2 parametros" );
+        return;
+    }
+
+    int w = std::stoi( args[1] );
+    int h = std::stoi( args[2] );
+    
+    ctx.www = w;
+    ctx.hhh = h;
+
+    std::cout << ctx.www << " " << ctx.hhh << "\n";
+}
 
 void Interpreter::start()
 {
@@ -139,8 +181,12 @@ void Interpreter::start()
 
         if( isCommand("winSize") ) resizeWin( args ); else 
 
-        if( isCommand("cls") || isCommand("clear") ) system("cls");
-         
+        if( isCommand("cls") || isCommand("clear") ) system("cls"); else 
+        
+        if( isCommand("moveObj") ) moveObj( args );
+
+        if( isCommand("resizeObj") ) resizeeObj( args );
+        
     }
 
 }
