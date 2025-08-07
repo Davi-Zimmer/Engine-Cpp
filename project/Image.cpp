@@ -52,8 +52,6 @@ float Image::getScale(){
 }
 
 
-
-
 float Image::setRotationX( float angle ){
     rotX = angle;
 }

@@ -65,7 +65,7 @@ void Matrix::MultiplyMat4_2(const float* a, const float* b, float* result) {
     }
 }
 
-void Matrix::MultiplyMat4(float out[16], const float a[16], const float b[16]){
+void Matrix::MultiplyMat4(float out[16], const float a[16], const float b[16]) {
 
     float result[16];
     for (int row = 0; row < 4; ++row)
@@ -77,12 +77,7 @@ void Matrix::MultiplyMat4(float out[16], const float a[16], const float b[16]){
     std::copy(result, result + 16, out);
 }
 
-void Matrix::CreateTransformMatrix (
-    float* matrix,
-    float x, float y,
-    float sx, float sy,
-    float rotX, float rotY, float rotZ
-) {
+void Matrix::CreateTransformMatrix ( float* matrix, float x, float y, float sx, float sy, float rotX, float rotY, float rotZ ) {
     // Identidade
     float identity[16] = {
         1, 0, 0, 0,   
@@ -136,7 +131,8 @@ void Matrix::CreateTransformMatrix (
     matrix[13] = y;
 }
 
-void Matrix::EmptyMatrix ( float* matrix ){
+void Matrix::EmptyMatrix ( float* matrix ) {
     for (int i = 0; i < 16; i++)
         matrix[i] = (i % 5 == 0) ? 1.0f : 0.0f;
 }
+

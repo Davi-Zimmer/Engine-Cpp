@@ -55,15 +55,14 @@ class Canvas2D {
 
     void square( float x, float y, float size );
 
-    void drawImage( unsigned int textureID, float x, float y, float w, float h,
-                        float u1, float v1, float u2, float v2 );
+
     rgba hexToRgba( char* hex );
 
     Image loadTexture(const char* path);
 
-    void drawImage(unsigned int texture, float x, float y, float w, float h);
+    void drawImage( Image* img, float x, float y, float w, float h);
     
-    void drawSprite( Image img, float cx, float cy, float cw, float ch, float x, float y, float w, float h);
+    void drawSprite( Image* img, float cx, float cy, float cw, float ch, float x, float y, float w, float h);
 
     private:
         unsigned int VAO = 0;
