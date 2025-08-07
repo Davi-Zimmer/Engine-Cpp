@@ -3,11 +3,11 @@
 
 #include <iostream>
 #include <thread>
-#include "headers/Canvas2D.h"
 #include <cmath>
+#include "headers/Canvas2D.h"
 #include "./external/stb_image.h"
-
 #include "./headers/Image.h"
+#include "./headers/Matrix.h"
 
 #include <string>
 #include <windows.h>
@@ -42,21 +42,25 @@ Canvas2D::Canvas2D(): image(0, 0, 0) {
         )";
 
 
-         textureVertexShader = R"(
+        textureVertexShader = R"(
             #version 330 core
             layout(location = 0) in vec2 aPos;
             layout(location = 1) in vec2 aTexCoord;
 
+            uniform mat4 uTransform;  // nova linha
+
             out vec2 TexCoord;
 
             void main() {
-                gl_Position = vec4(aPos, 0.0, 1.0);
+                // aplica a transformação (posição, rotação, escala, etc)
+                gl_Position = uTransform * vec4(aPos, 0.0, 1.0);
                 TexCoord = aTexCoord;
             }
+
         )";
 
-         textureFragmentShader = R"(
-            #version 330 core
+        textureFragmentShader = R"(
+           #version 330 core
             in vec2 TexCoord;
             out vec4 FragColor;
 
@@ -185,11 +189,11 @@ void Canvas2D::renderConfigs( GLFWwindow* window ){
 
 void Canvas2D::render( GLFWwindow* window ) {
     
-   // drawImage(image.getTexture(), 0, 0, 1000, 1000);
-   // drawSprite( image, 100, -100, 20, 20, 0, 0, 100, 100 );
-    setColor(255, 0, 0, 1);
-    rect(100, 100, 100, 100);
-
+    // setColor(255, 0, 0, 1);
+    // rect(100, 100, 100, 100);
+    // drawImage(image.getTexture(), 100, 0, -100, -100);
+    
+    // drawSprite( image, 0, 0, 20, 20, 0, 0, -100, -100 );
 
 }
 
@@ -325,17 +329,26 @@ Image Canvas2D::loadTexture(const char* path) {
 }
 
 void Canvas2D::drawImage(unsigned int texture, float x, float y, float w, float h) {
+    
+    float absW = std::abs(w);
+    float absH = std::abs(h);
+
     float x1 = toNdcX(x);
+    float x2 = toNdcX(x + absW);
     float y1 = toNdcY(y);
-    float x2 = toNdcX(x + w);
-    float y2 = toNdcY(y - h);
+    float y2 = toNdcY(y - absH);
+
+    float u0 = 0.0f, u1 = 1.0f;
+    float v0 = 1.0f, v1 = 0.0f;
+
+    if (w < 0) std::swap(u0, u1); // espelha horizontal
+    if (h < 0) std::swap(v0, v1); // espelha vertical
 
     float vertices[] = {
-        // posição     // texCoord
-        x1, y1,        0.0f, 1.0f,
-        x2, y1,        1.0f, 1.0f,
-        x1, y2,        0.0f, 0.0f,
-        x2, y2,        1.0f, 0.0f
+        x1, y1,  u0, v0,
+        x2, y1,  u1, v0,
+        x1, y2,  u0, v1,
+        x2, y2,  u1, v1
     };
 
     unsigned int indices[] = { 0, 1, 2, 1, 2, 3 };
@@ -349,7 +362,6 @@ void Canvas2D::drawImage(unsigned int texture, float x, float y, float w, float 
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
@@ -380,31 +392,38 @@ void Canvas2D::drawSprite(Image img, float sx, float sy, float sw, float sh, flo
     
     unsigned int texture = img.getTexture();
 
+
     float texWidth = img.getWidth();
     float texHeight = img.getHeight();
     
-    // Calcula coordenadas normalizadas da textura
+    float absDw = std::abs(dw);
+    float absDh = std::abs(dh);
+
+    // Coordenadas de tela
+    float x1 = toNdcX(dx);
+    float x2 = toNdcX(dx + absDw);
+    float y1 = toNdcY(dy);
+    float y2 = toNdcY(dy - absDh);
+
+    // Coordenadas normalizadas de textura (UV)
     float u0 = sx / texWidth;
     float v0 = sy / texHeight;
     float u1 = (sx + sw) / texWidth;
     float v1 = (sy + sh) / texHeight;
 
-    // Inverte Y porque OpenGL usa (0,0) embaixo
+    // Corrige Y da textura (OpenGL usa origem no canto inferior)
     v0 = 1.0f - v0;
     v1 = 1.0f - v1;
 
-    // Converte posição da tela pra NDC
-    float x1 = toNdcX(dx);
-    float y1 = toNdcY(dy);
-    float x2 = toNdcX(dx + dw);
-    float y2 = toNdcY(dy - dh); // cuidado aqui: dy - dh!
+    // Inversão horizontal / vertical apenas na textura
+    if (dw < 0) std::swap(u0, u1); // flip horizontal
+    if (dh < 0) std::swap(v0, v1); // flip vertical
 
     float vertices[] = {
-        // posição     // texCoord
-        x1, y1,        u0, v1,
-        x2, y1,        u1, v1,
-        x1, y2,        u0, v0,
-        x2, y2,        u1, v0
+        x1, y1,  u0, v0,
+        x2, y1,  u1, v0,
+        x1, y2,  u0, v1,
+        x2, y2,  u1, v1
     };
 
     unsigned int indices[] = { 0, 1, 2, 1, 2, 3 };
