@@ -52,8 +52,8 @@ Canvas2D::Canvas2D(): image(0, 0, 0) {
             out vec2 TexCoord;
 
             void main() {
-                // aplica a transformação (posição, rotação, escala, etc)
-                gl_Position = uTransform * vec4(aPos, 0.0, 1.0);
+                vec4 position = vec4(aPos, 0.0, 1.0);
+                gl_Position = uTransform * position;
                 TexCoord = aTexCoord;
             }
 
@@ -161,7 +161,8 @@ void Canvas2D::renderConstructor(){
 
     */
     setShader(program);
-    std::string imgPath = getExecutablePath() + "\\test.png";
+    //std::string imgPath = getExecutablePath() + "\\test.png";
+    std::string imgPath = getExecutablePath() + "\\tiles.png";
 
     image = loadTexture( imgPath.c_str() );
 
@@ -191,10 +192,16 @@ void Canvas2D::render( GLFWwindow* window ) {
     
     // setColor(255, 0, 0, 1);
     // rect(100, 100, 100, 100);
-    // drawImage(image.getTexture(), 100, 0, -100, -100);
+    // drawImage( &image, 100, -100, 100, 100 );
     
-    // drawSprite( image, 0, 0, 20, 20, 0, 0, -100, -100 );
+    // drawSprite( &image, 0, 0, 20, 20, 0, 0, 100, 100 );
 
+    // image.setRotationZ( image.getRotationZ() + .001f );
+    // image.setRotationY( image.getRotationY() + .001f );
+    // image.setRotationX( image.getRotationX() + .001f );
+
+    drawSprite( &image, 128, 0, 32, 32, 0, 0, 100, 100 );
+    
 }
 
 
@@ -297,7 +304,7 @@ void Canvas2D::square( float x, float y, float size ){
 Image Canvas2D::loadTexture(const char* path) {
     
     int width, height, nrChannels;
-    stbi_set_flip_vertically_on_load(true); // inverte imagem no eixo Y
+    stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(path, &width, &height, &nrChannels, 4);
     if (!data) {
         std::cout << "Erro ao carregar imagem: " << path << "\n";
@@ -309,7 +316,8 @@ Image Canvas2D::loadTexture(const char* path) {
     unsigned int texture;
     glGenTextures(1, &texture);
     // getchar();
-    glBindTexture(GL_TEXTURE_2D, texture); ////////////////////////////////////////////
+    glBindTexture(GL_TEXTURE_2D, texture);
+    stbi_set_flip_vertically_on_load(true);
 
     // Parâmetros da textura
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
@@ -328,27 +336,86 @@ Image Canvas2D::loadTexture(const char* path) {
     return img;
 }
 
-void Canvas2D::drawImage(unsigned int texture, float x, float y, float w, float h) {
+void Canvas2D::drawImage( Image* img, float x, float y, float w, float h ) {
     
-    float absW = std::abs(w);
-    float absH = std::abs(h);
-
-    float x1 = toNdcX(x);
-    float x2 = toNdcX(x + absW);
-    float y1 = toNdcY(y);
-    float y2 = toNdcY(y - absH);
-
     float u0 = 0.0f, u1 = 1.0f;
     float v0 = 1.0f, v1 = 0.0f;
 
-    if (w < 0) std::swap(u0, u1); // espelha horizontal
-    if (h < 0) std::swap(v0, v1); // espelha vertical
-
     float vertices[] = {
-        x1, y1,  u0, v0,
-        x2, y1,  u1, v0,
-        x1, y2,  u0, v1,
-        x2, y2,  u1, v1
+        -1.0f,  1.0f, u0, v0,
+         1.0f,  1.0f, u1, v0,
+        -1.0f, -1.0f, u0, v1,
+         1.0f, -1.0f, u1, v1
+    };
+
+    unsigned int indices[] = { 0, 1, 2, 1, 2, 3 };
+
+    unsigned int VAO, VBO, EBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+    stbi_set_flip_vertically_on_load(true);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glUseProgram(textureShader);
+    glBindTexture(GL_TEXTURE_2D, img->getTexture());
+
+    float model[16];
+    float scaleX = toNdcX(x + w) - toNdcX(x);
+    float scaleY = toNdcY(y) - toNdcY(y + h);
+
+    Matrix::CreateTransformMatrix(
+        model,
+        toNdcX(x + w / 2.0f),
+        toNdcY(y - h / 2.0f),
+        scaleX / 2.0f,
+        scaleY / 2.0f,
+        img->getRotationX(),
+        img->getRotationY(),
+        img->getRotationZ()
+    );
+
+    GLint transformLoc = glGetUniformLocation(textureShader, "uTransform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, model);
+
+    glUniform1i(glGetUniformLocation(textureShader, "uTexture"), 0);
+    glActiveTexture(GL_TEXTURE0);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+}
+
+void Canvas2D::drawSprite( Image* img, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh ) {
+    // Tamanho total da imagem (sprite sheet)
+    float texW = (float)img->getWidth();
+    float texH = (float)img->getHeight();
+
+    
+    float u0 = sx / texW;
+    float u1 = (sx + sw) / texW;
+
+    float v0 = 1.0f - (sy / texH);
+    float v1 = 1.0f - ((sy + sh) / texH);
+    // Vertices com posições relativas ao centro (-1 a 1)
+    float vertices[] = {
+        -1.0f,  1.0f,  u0, v0,
+         1.0f,  1.0f,  u1, v0,
+        -1.0f, -1.0f,  u0, v1,
+         1.0f, -1.0f,  u1, v1
     };
 
     unsigned int indices[] = { 0, 1, 2, 1, 2, 3 };
@@ -365,19 +432,33 @@ void Canvas2D::drawImage(unsigned int texture, float x, float y, float w, float 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    // posições
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-
-    // texCoords
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    // Usa shader de textura
     glUseProgram(textureShader);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindTexture(GL_TEXTURE_2D, img->getTexture());
 
-    // Importante: setar o uniform da textura
+    // Calcula matriz de transformação usando a posição e tamanho de destino (dx,dy,dw,dh)
+    float model[16];
+    float scaleX = toNdcX(dx + dw) - toNdcX(dx);
+    float scaleY = toNdcY(dy) - toNdcY(dy + dh); // lembra que y cresce pra baixo na tela
+
+    Matrix::CreateTransformMatrix(
+        model,
+        toNdcX(dx + dw / 2.0f),
+        toNdcY(dy - dh / 2.0f),
+        scaleX / 2.0f,
+        scaleY / 2.0f,
+        img->getRotationX(),
+        img->getRotationY(),
+        img->getRotationZ()
+    );
+
+    GLint transformLoc = glGetUniformLocation(textureShader, "uTransform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, model);
+
     glUniform1i(glGetUniformLocation(textureShader, "uTexture"), 0);
     glActiveTexture(GL_TEXTURE0);
 
@@ -388,77 +469,3 @@ void Canvas2D::drawImage(unsigned int texture, float x, float y, float w, float 
     glDeleteBuffers(1, &EBO);
 }
 
-void Canvas2D::drawSprite(Image img, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh ){
-    
-    unsigned int texture = img.getTexture();
-
-
-    float texWidth = img.getWidth();
-    float texHeight = img.getHeight();
-    
-    float absDw = std::abs(dw);
-    float absDh = std::abs(dh);
-
-    // Coordenadas de tela
-    float x1 = toNdcX(dx);
-    float x2 = toNdcX(dx + absDw);
-    float y1 = toNdcY(dy);
-    float y2 = toNdcY(dy - absDh);
-
-    // Coordenadas normalizadas de textura (UV)
-    float u0 = sx / texWidth;
-    float v0 = sy / texHeight;
-    float u1 = (sx + sw) / texWidth;
-    float v1 = (sy + sh) / texHeight;
-
-    // Corrige Y da textura (OpenGL usa origem no canto inferior)
-    v0 = 1.0f - v0;
-    v1 = 1.0f - v1;
-
-    // Inversão horizontal / vertical apenas na textura
-    if (dw < 0) std::swap(u0, u1); // flip horizontal
-    if (dh < 0) std::swap(v0, v1); // flip vertical
-
-    float vertices[] = {
-        x1, y1,  u0, v0,
-        x2, y1,  u1, v0,
-        x1, y2,  u0, v1,
-        x2, y2,  u1, v1
-    };
-
-    unsigned int indices[] = { 0, 1, 2, 1, 2, 3 };
-
-    unsigned int VAO, VBO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // posições
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    // texCoords
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // Usa shader
-    glUseProgram(textureShader);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glUniform1i(glGetUniformLocation(textureShader, "uTexture"), 0);
-    glActiveTexture(GL_TEXTURE0);
-
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
-
-}
