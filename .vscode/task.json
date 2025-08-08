@@ -9,9 +9,10 @@
         "main.cpp",
         "module/src/glad.c",
         "-Imodule/include",
-        "-Lmodule/lib",
+        "-Lmodule/libs",
         "-lglfw3",
         "-lopengl32",
+        "-lOpenAL32",
         "-lgdi32",
         "-luser32",
         "-o", "build/app.exe"

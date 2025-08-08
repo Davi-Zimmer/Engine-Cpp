@@ -13,10 +13,29 @@
 #include <vector>
 #include <sstream>
 
+#include <iostream>
+#include <AL/al.h>
+#include <AL/alc.h>
+#include "Audio.cpp"
+#include "headers/Utils.h"
 
+
+#include <windows.h>
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
+
+void playDisatster(){
+    std::string path = Utils::pathIn( "\\audio.wav" );
+        
+    PlaySound( path.c_str(), NULL, SND_FILENAME | SND_ASYNC);
+    Sleep(3000); // Espera 3 segundos para o som tocar
+}
 
 
 int main() {
+
+    playDisatster();
+   
 
     Engine engine;
 
