@@ -25,8 +25,8 @@ class Image {
         float getRotationZ();
         float getScale();
 
-        float setRotationX( float angle );
-        float setRotationY( float angle );
-        float setRotationZ( float angle );
-        float setScale( float scale );
+        void setRotationX( float angle );
+        void setRotationY( float angle );
+        void setRotationZ( float angle );
+        void setScale( float scale );
 };

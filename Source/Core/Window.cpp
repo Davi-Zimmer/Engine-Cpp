@@ -3,8 +3,8 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
-#include "./headers/Window.h"
-#include "./headers/Engine.h"
+#include "../../Includes/Core/Window.h"
+#include "../../Includes/Core/Engine.h"
 
 void FramebufferCallback(GLFWwindow* window, int width, int height) {
     // Pegamos o ponteiro que você salvou anteriormente

@@ -6,9 +6,9 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
-#include "headers/Engine.h"
-#include "headers/Interpreter.h"
-#include "headers/Canvas2D.h"
+#include "../../Includes/Core/Engine.h"
+#include "../../Includes/Utils/Interpreter.h"
+#include "../../Includes/Graphics/Canvas2D.h"
 
 
 std::vector<std::string> splitCommand( const std::string& stringCommand ) {
@@ -156,8 +156,7 @@ void Interpreter::resizeeObj( std::vector< std::string > args ){
     std::cout << ctx.www << " " << ctx.hhh << "\n";
 }
 
-void Interpreter::start()
-{
+void Interpreter::start(){
     std::string cmd;
 
     while( true )

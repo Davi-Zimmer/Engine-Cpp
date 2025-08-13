@@ -1,3 +1,4 @@
 module
 glfw3.dll
 build
+node_modules

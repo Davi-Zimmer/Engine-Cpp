@@ -4,24 +4,20 @@
 #include <iostream>
 #include <thread>
 #include <cmath>
-#include "headers/Canvas2D.h"
-#include "./external/stb_image.h"
-#include "./headers/Image.h"
-#include "./headers/Matrix.h"
+#include "../../Includes/Graphics/Canvas2D.h"
+#include "../../External/stb_image.h"
+#include "../../Includes/Graphics/Image.h"
+#include "../../Includes/Math/Matrix.h"
+
+#include "../../Includes/Audio/Audio.h"
 
 #include <string>
-#include <windows.h>
+#include "../../Includes/Utils/Utils.h"
 
-std::string getExecutablePath() {
-    char buffer[MAX_PATH];
-    GetModuleFileNameA(NULL, buffer, MAX_PATH); // pega o caminho completo do exe
-    std::string path(buffer);
-    size_t lastSlash = path.find_last_of("\\/");
-    return path.substr(0, lastSlash); // pasta do exe
-}
+
 
 Canvas2D::Canvas2D(): image(0, 0, 0) {
-    
+
         vertexShaderSource = R"(
             #version 330 core
             layout(location = 0) in vec2 aPos;
@@ -162,7 +158,7 @@ void Canvas2D::renderConstructor(){
     */
     setShader(program);
     //std::string imgPath = getExecutablePath() + "\\test.png";
-    std::string imgPath = getExecutablePath() + "\\tiles.png";
+    std::string imgPath = Utils::pathIn("\\tiles.png") ;
 
     image = loadTexture( imgPath.c_str() );
 
@@ -301,7 +297,7 @@ void Canvas2D::square( float x, float y, float size ){
     rect( x, y, size, size );
 }
 
-Image Canvas2D::loadTexture(const char* path) {
+Image Canvas2D::loadTexture( const char* path ) {
     
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(true);

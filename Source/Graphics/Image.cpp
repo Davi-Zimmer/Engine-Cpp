@@ -1,5 +1,5 @@
-#include "./headers/Image.h"
-#include "headers/Matrix.h"
+#include "../../Includes/Graphics/Image.h"
+#include "../../Includes/Math/Matrix.h"
 #include <iostream>
 #include <cstring> 
 
@@ -30,7 +30,7 @@ float* Image::getTransform(){
 
 void Image::setTransform( const float* mat ){
 
-    std::memcpy( transform, mat, sizeof( float ) * 16);
+    std::memcpy( transform, mat, sizeof( float ) * 16 );
 
 }
 
@@ -52,19 +52,18 @@ float Image::getScale(){
 }
 
 
-float Image::setRotationX( float angle ){
+void Image::setRotationX( float angle ){
     rotX = angle;
 }
 
-float Image::setRotationY( float angle ){
+void Image::setRotationY( float angle ){
     rotY = angle;
 }
 
-float Image::setRotationZ( float angle ){
+void Image::setRotationZ( float angle ){
     rotZ = angle;
 }
 
-
-float Image::setScale( float s ){
+void Image::setScale( float s ){
     scale = s;
 }

@@ -1,10 +1,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "./headers/Window.h"
-#include "./headers/Engine.h"
-#include "./headers/Interpreter.h"
-#include "./headers/Canvas2D.h"
+#include "../../Includes/Core/Window.h"
+#include "../../Includes/Core/Engine.h"
+#include "../../Includes/Utils/Interpreter.h"
+
+#include "../../Includes/Graphics/Canvas2D.h"
 #include <iostream>
 #include <thread>
 #include <string>
@@ -13,10 +14,29 @@
 #include <vector>
 #include <sstream>
 
+#include <iostream>
+#include <AL/al.h>
+#include <AL/alc.h>
+#include "../../Includes/Audio/Audio.h"
+#include "../../Includes/Utils/Utils.h"
 
+
+#include <windows.h>
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
+
+void playDisatster(){
+    std::string path = Utils::pathIn( "\\audio.wav" );
+        
+    PlaySound( path.c_str(), NULL, SND_FILENAME | SND_ASYNC);
+    Sleep(3000); // Espera 3 segundos para o som tocar
+}
 
 
 int main() {
+
+    playDisatster();
+   
 
     Engine engine;
 
