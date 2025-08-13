@@ -1,0 +1,17 @@
+{
+  "name": "cppbasicengine",
+  "version": "1.0.0",
+  "main": "Tools/build.js",
+  "scripts": {
+    "build": "node Tools/build.js"
+  },
+
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+
+  "description": "",
+  "dependencies": {
+    "child_process": "^1.0.2"
+  }
+}

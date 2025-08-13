@@ -1,7 +1,7 @@
 #include <iostream>
 #include <thread>
-#include "./headers/Engine.h"
-#include "headers/Canvas2D.h"
+#include "../../Includes/Core/Engine.h"
+#include "../../Includes/Graphics/Canvas2D.h"
 
 
 Engine::Engine(){

@@ -5,7 +5,7 @@
 #include <thread>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "Canvas2D.h"
+#include "../Graphics/Canvas2D.h"
 
 class Engine {
 

@@ -6,8 +6,8 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#include "Engine.h"
-#include "Canvas2D.h"
+#include "../Graphics/Canvas2D.h"
+#include "../Core/Engine.h"
 
 class Interpreter {
     public:

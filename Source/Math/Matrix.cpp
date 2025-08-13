@@ -1,5 +1,10 @@
-#include "headers/Matrix.h"
+#include "../../Includes/Math/Matrix.h"
 #include <cmath>
+#include <algorithm>
+
+
+using std::cos;
+using std::sin;
 
 void Matrix::Identity(float* out) {
     for (int i = 0; i < 16; i++)

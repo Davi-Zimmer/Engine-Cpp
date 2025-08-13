@@ -1,10 +1,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "./headers/Window.h"
-#include "./headers/Engine.h"
-#include "./headers/Interpreter.h"
-#include "./headers/Canvas2D.h"
+#include "../../Includes/Core/Window.h"
+#include "../../Includes/Core/Engine.h"
+#include "../../Includes/Utils/Interpreter.h"
+
+#include "../../Includes/Graphics/Canvas2D.h"
 #include <iostream>
 #include <thread>
 #include <string>
@@ -16,8 +17,8 @@
 #include <iostream>
 #include <AL/al.h>
 #include <AL/alc.h>
-#include "Audio.cpp"
-#include "headers/Utils.h"
+#include "../../Includes/Audio/Audio.h"
+#include "../../Includes/Utils/Utils.h"
 
 
 #include <windows.h>

@@ -1,7 +1,7 @@
 
 #include <windows.h>
 #include <string>
-#include "headers/Utils.h"
+#include "../../Includes/Utils/Utils.h"
 
 std::string Utils::getExecutablePath() {
     char buffer[MAX_PATH];

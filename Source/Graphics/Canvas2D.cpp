@@ -4,15 +4,15 @@
 #include <iostream>
 #include <thread>
 #include <cmath>
-#include "headers/Canvas2D.h"
-#include "./external/stb_image.h"
-#include "./headers/Image.h"
-#include "./headers/Matrix.h"
+#include "../../Includes/Graphics/Canvas2D.h"
+#include "../../External/stb_image.h"
+#include "../../Includes/Graphics/Image.h"
+#include "../../Includes/Math/Matrix.h"
 
-#include "headers/Audio.h"
+#include "../../Includes/Audio/Audio.h"
 
 #include <string>
-#include "headers/Utils.h"
+#include "../../Includes/Utils/Utils.h"
 
 
 
