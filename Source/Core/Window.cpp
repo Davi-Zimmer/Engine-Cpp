@@ -14,7 +14,7 @@ void FramebufferCallback(GLFWwindow* window, int width, int height) {
     }
 }
 
-Window::Window( Engine eng ){
+Window::Window( Engine* eng ): engine( eng ){
 
     if (!glfwInit())
     {
@@ -22,13 +22,11 @@ Window::Window( Engine eng ){
         return;
     }
 
+    glfwSwapInterval(1);
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    
-    engine = eng;
-
 
 }
 
@@ -36,7 +34,7 @@ Window::Window( Engine eng ){
 GLFWwindow* Window::createWindow( int width, int height, const char* windowName )
 {
     window = glfwCreateWindow( width, height, windowName, NULL, NULL );
-    
+
     if( window == NULL )
     {
         std::cout << "Failed to open GLFW window.\n";
@@ -51,7 +49,7 @@ GLFWwindow* Window::createWindow( int width, int height, const char* windowName 
         return NULL;
     }
 
-    engine.windowResized( window, width, height );
+    engine->windowResized( window, width, height );
 
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window, FramebufferCallback);
@@ -62,7 +60,7 @@ GLFWwindow* Window::createWindow( int width, int height, const char* windowName 
 
 void Window::startLoop(){
     
-    engine.frameSkipper( window );
+    engine->frameSkipper( window );
     
     glfwTerminate();
 
@@ -70,5 +68,5 @@ void Window::startLoop(){
 
 void Window::onResize(GLFWwindow* window, int width, int height)
 {
-    engine.windowResized( window, width, height);
+    engine->windowResized( window, width, height);
 }

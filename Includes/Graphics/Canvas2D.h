@@ -28,8 +28,8 @@ class Canvas2D {
     
 
     void renderConstructor();
-    void renderConfigs( GLFWwindow* window );
-    void render( GLFWwindow* window );
+    void renderConfigs( GLFWwindow* window, double deltaTime );
+    void render( GLFWwindow* window, double deltaTime );
 
     void setCanvasSize( float w, float h );
 

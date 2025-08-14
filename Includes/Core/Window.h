@@ -7,12 +7,11 @@
 class Window {
     public:
     
-
-        Engine engine;
+        Engine* engine;
 
         GLFWwindow* window;
 
-        Window( Engine eng );
+        Window( Engine* eng );
 
         GLFWwindow* createWindow( int width, int height, const char* windowName );
         

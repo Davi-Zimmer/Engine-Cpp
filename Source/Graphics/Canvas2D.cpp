@@ -38,7 +38,7 @@ void Canvas2D::renderConstructor(){
 
 }
 
-void Canvas2D::renderConfigs( GLFWwindow* window ){
+void Canvas2D::renderConfigs( GLFWwindow* window, double deltaTime ){
 
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -48,7 +48,7 @@ void Canvas2D::renderConfigs( GLFWwindow* window ){
     int colorLocation = glGetUniformLocation( shaders.shaderProgram, "uColor");
     glUniform4fv( colorLocation, 1, fillColor);
 
-    render( window );
+    render( window, deltaTime );
 
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -57,7 +57,7 @@ void Canvas2D::renderConfigs( GLFWwindow* window ){
 
 }
 
-void Canvas2D::render( GLFWwindow* window ) {
+void Canvas2D::render( GLFWwindow* window, double deltaTime ) {
     
     // setColor(255, 0, 0, 1);
     // rect(100, 100, 100, 100);
@@ -65,11 +65,11 @@ void Canvas2D::render( GLFWwindow* window ) {
     
     // drawSprite( &image, 0, 0, 20, 20, 0, 0, 100, 100 );
 
-    // image.setRotationZ( image.getRotationZ() + .001f );
-    // image.setRotationY( image.getRotationY() + .001f );
-    // image.setRotationX( image.getRotationX() + .001f );
+    image.setRotationZ( image.getRotationZ() + 1 * deltaTime );
+    image.setRotationY( image.getRotationY() + 1 * deltaTime );
+    image.setRotationX( image.getRotationX() + 1 * deltaTime );
 
-    drawSprite( &image, 128, 0, 32, 32, 0, 0, 800, 800 );
+    drawSprite( &image, 128, 0, 32, 32, 100, -100, 200, 200 );
     
 }
 

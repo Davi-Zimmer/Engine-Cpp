@@ -18,6 +18,8 @@ class Engine {
         float fpsCounter;
         int framesRendered;
 
+        float FPS = 0;
+
         Canvas2D ctx;
 
         std::chrono::_V2::system_clock::time_point lastTime;
@@ -31,7 +33,10 @@ class Engine {
 
         void frameSkipper( GLFWwindow* window );
 
-        void render( GLFWwindow* window );
+        void render( GLFWwindow* window, double deltaTime );
         
         void windowResized( GLFWwindow* window, int width, int height );
+
+        int getFps_();
+        void setFps_( int fps ); 
 };

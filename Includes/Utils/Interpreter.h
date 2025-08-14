@@ -11,12 +11,12 @@
 
 class Interpreter {
     public:
-        Engine engine;
+        Engine* engine;
         GLFWwindow* winGL;
-        Canvas2D ctx;
+        Canvas2D* ctx;
         void start();
 
-        Interpreter( Engine e,  GLFWwindow* wGl, Canvas2D canvas );
+        Interpreter( Engine* e,  GLFWwindow* wGl, Canvas2D* canvas );
 
 
     private:
@@ -26,4 +26,6 @@ class Interpreter {
         void resizeWin ( std::vector< std::string > );
         void moveObj( std::vector< std::string > args );
         void resizeeObj( std::vector< std::string > args );
+        void getFpsLixo();
+
     };
