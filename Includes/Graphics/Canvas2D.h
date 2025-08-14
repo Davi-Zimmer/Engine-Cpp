@@ -3,13 +3,14 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "Image.h"
+#include "Shaders.h"
 
 struct rgba {
     float r, g, b, a;
 };
 
 class Canvas2D {
-    public:
+        public:
     Canvas2D();
     
     float xxx;
@@ -19,21 +20,12 @@ class Canvas2D {
     float n;
 
     Image image;
+    Shaders shaders;
 
-    const char* vertexShaderSource;
-    const char* fragmentShaderSource;
-    const char* uTexture;
-    const char* textureVertexShader;
-    const char* textureFragmentShader;
 
-    unsigned int compileShader( unsigned int type, const char* source );
-    unsigned int createShaderProgram( unsigned int vertexShader, unsigned int fragmentShader );
+    // unsigned int compileShader( unsigned int type, const char* source );
+    // unsigned int createShaderProgram( unsigned int vertexShader, unsigned int fragmentShader );
     
-    void setVAO(unsigned int vao);
-        void setShader(unsigned int shader);
-        unsigned int getVAO() const;
-        unsigned int getShader() const;
-
 
     void renderConstructor();
     void renderConfigs( GLFWwindow* window );
@@ -64,15 +56,14 @@ class Canvas2D {
     
     void drawSprite( Image* img, float cx, float cy, float cw, float ch, float x, float y, float w, float h);
 
-    private:
-        unsigned int VAO = 0;
-        unsigned int VBO = 0;
-        unsigned int shaderProgram = 0;
-        unsigned int textureShader;
-        
-        float fillColor[4] = {1.0f, 0.2f, 0.5f, 1.0f}; 
+        private:
+    unsigned int VAO = 0;
+    unsigned int VBO = 0;
 
-        float canvasWidth;
-        float canvasHeight;
+    
+    float fillColor[4] = {1.0f, 0.2f, 0.5f, 1.0f}; 
+
+    float canvasWidth;
+    float canvasHeight;
 
 };

@@ -35,7 +35,7 @@ void playDisatster(){
 
 int main() {
 
-    playDisatster();
+    // playDisatster();
    
 
     Engine engine;
