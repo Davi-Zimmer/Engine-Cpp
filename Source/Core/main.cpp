@@ -37,16 +37,15 @@ int main() {
 
     // playDisatster();
    
-
     Engine engine;
 
-    Window window( engine );
+    Window window( &engine );
 
     GLFWwindow* winGL = window.createWindow( 600, 400, "Janela" );
 
     if( !winGL ) return 0;
 
-    Interpreter interpreter( engine, winGL, engine.ctx );
+    Interpreter interpreter( &engine, winGL, &engine.ctx );
     
     std::thread interpretadorThread([&interpreter]() {
         interpreter.start();

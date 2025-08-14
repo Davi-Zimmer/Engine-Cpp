@@ -3,10 +3,13 @@
 #include "../../Includes/Core/Engine.h"
 #include "../../Includes/Graphics/Canvas2D.h"
 
+#include <SFML/System.hpp>
+
+bool countFps = true;
 
 Engine::Engine(){
 
-    setFpsTarget( 30 );
+    setFpsTarget( 60 );
     
     timePerFrame = .0f / targetFps;
     
@@ -28,46 +31,49 @@ int Engine::getFpsTarget()
     return targetFps;
 }
 
-void Engine::frameSkipper( GLFWwindow* window )
-{
 
-    auto  lastTime = std::chrono::high_resolution_clock::now();
-    auto  fpsTimer = std::chrono::high_resolution_clock::now();
-    float accumulator = .0f;
-    
+void Engine::frameSkipper(GLFWwindow* window){
     ctx.renderConstructor();
 
-    while(!glfwWindowShouldClose(window))
+    const float targetFrameTime = 1.0f / targetFps;
+    sf::Clock clock;
+    float fpsTimer = 0.0f;
+    int frameCount = 0;
+
+
+    while (!glfwWindowShouldClose(window))
     {
-        // Medir tempo desde o último loop
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<float> delta = currentTime - lastTime;
-        lastTime = currentTime;
 
-        accumulator += delta.count();
-        fpsCounter += delta.count();
-
-        render( window );
-
-        // FPS real
-        if (fpsCounter >= 1.0f) {
-            // std::cout << "FPS: " << framesRendered << std::endl;
-            fpsCounter = 0.0f;
-            framesRendered = 0;
-        }
-
-        // Se passou tempo suficiente, renderiza um frame
-        if (accumulator >= timePerFrame) {
-            accumulator -= timePerFrame;
-            framesRendered++;
-        }
+        float deltaTime = clock.restart().asSeconds();
         
+        render( window, deltaTime );
+
+        fpsTimer += deltaTime;
+        frameCount++;
+        if (fpsTimer >= 1.0f) {
+            std::cout << "FPS: " << frameCount << std::endl;
+            fpsTimer -= 1.0f;
+            frameCount = 0;
+        }
+
+        float sleepSeconds = targetFrameTime - clock.getElapsedTime().asSeconds();
+        if (sleepSeconds > 0){
+
+            sf::sleep(sf::seconds(sleepSeconds));
+
+        }
+
     }
 
 }
 
-void Engine::render( GLFWwindow* window ){
-    ctx.renderConfigs( window );
+int Engine::getFps_(){ 
+    std::cout << "[DEBUG] setFps_: " << FPS << std::endl;
+    return FPS; }
+void Engine::setFps_( int fps ){ FPS = fps; }
+
+void Engine::render( GLFWwindow* window, double deltaTime ){
+    ctx.renderConfigs( window, deltaTime );
 }
 
 void Engine::windowResized( GLFWwindow* window, int width, int height ){
