@@ -6,8 +6,9 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
-#include "headers/Engine.h"
-#include "headers/Interpreter.h"
+#include "../../Includes/Core/Engine.h"
+#include "../../Includes/Utils/Interpreter.h"
+#include "../../Includes/Graphics/Canvas2D.h"
 
 
 std::vector<std::string> splitCommand( const std::string& stringCommand ) {
@@ -41,14 +42,19 @@ void printLine(T line) {
     std::cout << line << std::endl;
 }
 
-Interpreter::Interpreter( Engine e, GLFWwindow* wGl ){
-    engine = e;
+
+
+
+Interpreter::Interpreter( Engine* e, GLFWwindow* wGl, Canvas2D* canvas ): engine(e), ctx(canvas) {
+    
     winGL = wGl;
+  
+
 }
 
 void Interpreter::getFps(){
 
-    printLine( engine.getFpsTarget() );
+    printLine( engine->getFpsTarget() );
     
 }
 
@@ -63,7 +69,7 @@ void Interpreter::setFps( std::string stringFps ){
 
     int value = std::stoi( stringFps );
     
-    engine.setFpsTarget( value );
+    engine->setFpsTarget( value );
 
     getFps();
 }
@@ -112,10 +118,52 @@ Interpreter::
 */
 
 
+void Interpreter::moveObj( std::vector< std::string > args ){
 
 
-void Interpreter::start()
-{
+    if( args.size() < 3) {
+        std::cout << ctx->xxx << " " << ctx->yyy << "\n";
+        printLine( "Precisa de 2 parametros" );
+        return;
+    }
+
+    int x = std::stoi( args[1] );
+    int y = std::stoi( args[2] );
+    
+    ctx->xxx = x;
+    ctx->yyy = y;
+
+    std::cout << ctx->xxx << " " << ctx->yyy << "\n";
+
+}
+
+
+void Interpreter::resizeeObj( std::vector< std::string > args ){
+
+    if( args.size() < 3) {
+        std::cout << ctx->www << " " << ctx->hhh << "\n";
+
+        printLine( "Precisa de 2 parametros" );
+        return;
+    }
+
+    int w = std::stoi( args[1] );
+    int h = std::stoi( args[2] );
+    
+    ctx->www = w;
+    ctx->hhh = h;
+
+    std::cout << ctx->www << " " << ctx->hhh << "\n";
+}
+
+void Interpreter::getFpsLixo(){
+
+    std::cout << "FPS: " << engine->getFps_() << std::endl;
+    std::cout << "[DEBUG] Engine ponteiro no interpreter: " << engine << std::endl;
+
+}
+
+void Interpreter::start(){
     std::string cmd;
 
     while( true )
@@ -139,8 +187,14 @@ void Interpreter::start()
 
         if( isCommand("winSize") ) resizeWin( args ); else 
 
-        if( isCommand("cls") || isCommand("clear") ) system("cls");
-         
+        if( isCommand("cls") || isCommand("clear") ) system("cls"); else 
+        
+        if( isCommand("moveObj") ) moveObj( args );
+
+        if( isCommand("resizeObj") ) resizeeObj( args );
+
+        if( isCommand("fps") ) getFpsLixo();
+        
     }
 
 }

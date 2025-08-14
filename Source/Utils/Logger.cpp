@@ -1,9 +1,10 @@
 #include <iostream>
-#include "headers/Logger.h"
+#include "../../Includes/Utils/Logger.h"
 
+
+Logger* Logger::Instance;
 
 Logger::Logger(){}
-
 
 Logger& Logger::GetInstance(){
 
