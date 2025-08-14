@@ -13,59 +13,11 @@
 
 #include <string>
 #include "../../Includes/Utils/Utils.h"
-
+#include "../../Includes/Graphics/Shaders.h"
 
 
 Canvas2D::Canvas2D(): image(0, 0, 0) {
-
-        vertexShaderSource = R"(
-            #version 330 core
-            layout(location = 0) in vec2 aPos;
-
-            void main() {
-                gl_Position = vec4(aPos, 0.0, 1.0);
-            }
-        )";
-
-        fragmentShaderSource = R"(
-            #version 330 core
-            out vec4 FragColor;
-            uniform vec4 uColor;
-
-            void main() {
-                FragColor = uColor;
-            }
-        )";
-
-
-        textureVertexShader = R"(
-            #version 330 core
-            layout(location = 0) in vec2 aPos;
-            layout(location = 1) in vec2 aTexCoord;
-
-            uniform mat4 uTransform;  // nova linha
-
-            out vec2 TexCoord;
-
-            void main() {
-                vec4 position = vec4(aPos, 0.0, 1.0);
-                gl_Position = uTransform * position;
-                TexCoord = aTexCoord;
-            }
-
-        )";
-
-        textureFragmentShader = R"(
-           #version 330 core
-            in vec2 TexCoord;
-            out vec4 FragColor;
-
-            uniform sampler2D uTexture;
-
-            void main() {
-                FragColor = texture(uTexture, TexCoord);
-            }
-        )";
+    shaders = Shaders();
 
     xxx = 0;
     yyy = 0;
@@ -75,88 +27,10 @@ Canvas2D::Canvas2D(): image(0, 0, 0) {
 
 }
 
-unsigned int Canvas2D::compileShader(unsigned int type, const char* source) {
-    unsigned int shader = glCreateShader(type);
-    glShaderSource(shader, 1, &source, NULL);
-    glCompileShader(shader);
-
-    // checagem de erro
-    int success;
-    char infoLog[512];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        std::cout << "Erro ao compilar " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") 
-                << " shader:\n" << infoLog << std::endl;
-    }
-
-    
-    return shader;
-}
-
-unsigned int Canvas2D::createShaderProgram(unsigned int vertexShader, unsigned int fragmentShader) {
-    unsigned int program = glCreateProgram();
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-    glLinkProgram(program);
-
-    int success;
-    char infoLog[512];
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(program, 512, NULL, infoLog);
-        std::cout << "Erro ao linkar programa:\n" << infoLog << std::endl;
-    }
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    return program;
-}
-
-
-void         Canvas2D::setVAO(unsigned int vao) { VAO = vao; }
-void         Canvas2D::setShader(unsigned int shader) { shaderProgram = shader; }
-unsigned int Canvas2D::getVAO() const { return VAO; }
-unsigned int Canvas2D::getShader() const { return shaderProgram; }
-
 void Canvas2D::renderConstructor(){
+    
+    shaders.init();
 
-    unsigned int vShader = compileShader(GL_VERTEX_SHADER, vertexShaderSource);
-    unsigned int fShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
-    unsigned int program = createShaderProgram(vShader, fShader);
-
-    unsigned int texVert = compileShader(GL_VERTEX_SHADER, textureVertexShader);
-    unsigned int texFrag = compileShader(GL_FRAGMENT_SHADER, textureFragmentShader);
-    textureShader = createShaderProgram(texVert, texFrag);
-
-    /*
-    float dummy[] = {
-        0.0f, 0.0f, 0.0f, 0.0f,  // espaço para 6 vértices com (x, y, u, v)
-        0.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f
-    };
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(dummy), dummy, GL_DYNAMIC_DRAW);
-
-    // posição: 2 floats
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    // texcoord: 2 floats
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    */
-    setShader(program);
     //std::string imgPath = getExecutablePath() + "\\test.png";
     std::string imgPath = Utils::pathIn("\\tiles.png") ;
 
@@ -164,15 +38,14 @@ void Canvas2D::renderConstructor(){
 
 }
 
-
 void Canvas2D::renderConfigs( GLFWwindow* window ){
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(shaderProgram);
+    glUseProgram( shaders.shaderProgram );
     glBindVertexArray(VAO);
 
-    int colorLocation = glGetUniformLocation( shaderProgram, "uColor");
+    int colorLocation = glGetUniformLocation( shaders.shaderProgram, "uColor");
     glUniform4fv( colorLocation, 1, fillColor);
 
     render( window );
@@ -196,7 +69,7 @@ void Canvas2D::render( GLFWwindow* window ) {
     // image.setRotationY( image.getRotationY() + .001f );
     // image.setRotationX( image.getRotationX() + .001f );
 
-    drawSprite( &image, 128, 0, 32, 32, 0, 0, 100, 100 );
+    drawSprite( &image, 128, 0, 32, 32, 0, 0, 800, 800 );
     
 }
 
@@ -224,7 +97,6 @@ rgba Canvas2D::hexToRgba( char* hex ){
 
 }
 
-
 void Canvas2D::setColor( float r, float g, float b, float a ){
     fillColor[0] = r;
     fillColor[1] = g;
@@ -251,8 +123,8 @@ void Canvas2D::mesh( float x1, float y1, float x2, float y2, float x3, float y3 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    glUseProgram(shaderProgram);
-    glUniform4fv(glGetUniformLocation(shaderProgram, "uColor"), 1, fillColor);
+    glUseProgram(shaders.shaderProgram);
+    glUniform4fv(glGetUniformLocation(shaders.shaderProgram, "uColor"), 1, fillColor);
 
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -364,8 +236,10 @@ void Canvas2D::drawImage( Image* img, float x, float y, float w, float h ) {
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    glUseProgram(textureShader);
+    glUseProgram(shaders.textureShader);
     glBindTexture(GL_TEXTURE_2D, img->getTexture());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     float model[16];
     float scaleX = toNdcX(x + w) - toNdcX(x);
@@ -382,17 +256,17 @@ void Canvas2D::drawImage( Image* img, float x, float y, float w, float h ) {
         img->getRotationZ()
     );
 
-    GLint transformLoc = glGetUniformLocation(textureShader, "uTransform");
+    GLint transformLoc = glGetUniformLocation(shaders.textureShader, "uTransform");
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, model);
 
-    glUniform1i(glGetUniformLocation(textureShader, "uTexture"), 0);
+    glUniform1i(glGetUniformLocation(shaders.textureShader, "uTexture"), 0);
     glActiveTexture(GL_TEXTURE0);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    // glDeleteVertexArrays(1, &VAO);
+    // glDeleteBuffers(1, &VBO);
+    // glDeleteBuffers(1, &EBO);
 }
 
 void Canvas2D::drawSprite( Image* img, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh ) {
@@ -433,9 +307,10 @@ void Canvas2D::drawSprite( Image* img, float sx, float sy, float sw, float sh, f
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    glUseProgram(textureShader);
+    glUseProgram(shaders.textureShader);
     glBindTexture(GL_TEXTURE_2D, img->getTexture());
 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     // Calcula matriz de transformação usando a posição e tamanho de destino (dx,dy,dw,dh)
     float model[16];
     float scaleX = toNdcX(dx + dw) - toNdcX(dx);
@@ -452,16 +327,15 @@ void Canvas2D::drawSprite( Image* img, float sx, float sy, float sw, float sh, f
         img->getRotationZ()
     );
 
-    GLint transformLoc = glGetUniformLocation(textureShader, "uTransform");
+    GLint transformLoc = glGetUniformLocation(shaders.textureShader, "uTransform");
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, model);
 
-    glUniform1i(glGetUniformLocation(textureShader, "uTexture"), 0);
+    glUniform1i(glGetUniformLocation(shaders.textureShader, "uTexture"), 0);
     glActiveTexture(GL_TEXTURE0);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    // glDeleteVertexArrays(1, &VAO);
+    // glDeleteBuffers(1, &VBO);
+    // glDeleteBuffers(1, &EBO);
 }
-
