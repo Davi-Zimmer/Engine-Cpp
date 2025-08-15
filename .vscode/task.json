@@ -18,6 +18,8 @@
           "-lstdc++fs",
           "-lwinmm",
           "-lsfml-system",
+          "-lsfml-audio",
+          "-lopenal32",
           "-o", "build/app.exe"
       ],
       "group": {
@@ -25,7 +27,7 @@
         "isDefault": true
       },
 
-       "problemMatcher": ["$gcc"],
+      "problemMatcher": ["$gcc"],
       "options": {
         "cwd": "${workspaceFolder}"
       }

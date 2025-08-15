@@ -1,3 +1,4 @@
+
 #include "../../Includes/Managers/EventManager.h"
 
 #include <iostream>
@@ -49,6 +50,35 @@ EventManager* EventManager::GetInstance(){
     return Instance;
 
 }
+
+
+
+void EventManager::addEvents( GLFWwindow* winGL ){
+
+    glfwSetWindowUserPointer(winGL, this);
+    
+    glfwSetKeyCallback(winGL, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+        auto* em = static_cast<EventManager*>(glfwGetWindowUserPointer(window));
+        em->keyCallback(window, key, scancode, action, mods);
+    });
+    
+    glfwSetMouseButtonCallback(winGL, [](GLFWwindow* window, int button, int action, int mods) {
+        auto* em = static_cast<EventManager*>(glfwGetWindowUserPointer(window));
+        em->mouseButtonsCallback( window, button, action, mods );
+    });
+        
+    glfwSetCursorPosCallback(winGL, [](GLFWwindow* window, double xpos, double ypos) {
+        auto* em = static_cast<EventManager*>(glfwGetWindowUserPointer(window));
+        em->mouseMoveCallback(xpos, ypos);  // você implementa dentro do EventManager
+    });
+
+    glfwSetScrollCallback(winGL, [](GLFWwindow* window, double xoffset, double yoffset) {
+        auto* em = static_cast<EventManager*>(glfwGetWindowUserPointer(window));
+        em->scrollCallback(xoffset, yoffset);
+    });
+    
+}
+
 
 void EventManager::executeKeyIfExists( int key, EventCallbacksVector callbackVector ){
     auto it = callbackVector.find( key );
@@ -120,7 +150,6 @@ void EventManager::onMouseDown( int button, EventCallback callback ){
 void EventManager::onMouseUp( int button, EventCallback callback ){
     mouseUpCallbacks[button].push_back(callback);
 }
-
 
 
 

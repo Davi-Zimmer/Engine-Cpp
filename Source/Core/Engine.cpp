@@ -44,6 +44,7 @@ void Engine::frameSkipper(GLFWwindow* window){
 
     while (!glfwWindowShouldClose(window))
     {
+        glfwPollEvents();
 
         float deltaTime = clock.restart().asSeconds();
         
