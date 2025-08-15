@@ -52,5 +52,7 @@ class EventManager {
 
     void onMouseMove( EventCallback callback );
     void onMouseScrool( EventCallback callback );
+
+    void addEvents( GLFWwindow* winGL );
    
 };

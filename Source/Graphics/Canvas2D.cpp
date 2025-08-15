@@ -53,7 +53,6 @@ void Canvas2D::renderConfigs( GLFWwindow* window, double deltaTime ){
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     glfwSwapBuffers(window);
-    glfwPollEvents();
 
 }
 

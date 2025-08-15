@@ -1,6 +1,5 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
 #include "../../Includes/Core/Window.h"
 #include "../../Includes/Core/Engine.h"
 #include "../../Includes/Utils/Interpreter.h"
@@ -20,6 +19,7 @@
 #include "../../Includes/Audio/Audio.h"
 #include "../../Includes/Utils/Utils.h"
 #include "../../includes/Managers/EventManager.h"
+#include "../../Includes/Audio/Audio.h"
 
 #include <windows.h>
 #include <mmsystem.h>
@@ -29,17 +29,14 @@ void playDisatster(){
     std::string path = Utils::pathIn( "\\audio.wav" );
         
     PlaySound( path.c_str(), NULL, SND_FILENAME | SND_ASYNC);
-    Sleep(3000); // Espera 3 segundos para o som tocar
 }
 
-
-void callback( GLFWwindow *window, int key, int scancode, int action, int mods ){
-
-}
 
 int main() {
 
     // playDisatster();
+    
+    Audio audio( Utils::pathIn("\\audio.wav").c_str() );
    
     Engine engine;
 
@@ -53,9 +50,14 @@ int main() {
     
     EventManager* eventManager = EventManager::GetInstance();
 
+
+    eventManager->addEvents( winGL );
+    
+    
+    
+    /*
     glfwSetWindowUserPointer(winGL, eventManager);
-
-
+    
     glfwSetKeyCallback(winGL, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
         auto* em = static_cast<EventManager*>(glfwGetWindowUserPointer(window));
         em->keyCallback(window, key, scancode, action, mods);
@@ -75,6 +77,8 @@ int main() {
         auto* em = static_cast<EventManager*>(glfwGetWindowUserPointer(window));
         em->scrollCallback(xoffset, yoffset);
     });
+
+    */
 
 
     std::thread interpretadorThread([&interpreter]() {
