@@ -9,12 +9,10 @@
           "-std=c++17",
           "-pthread",
           "modules/src/*.c",
-          
           "-Imodules/include",
           "-Lmodules/libs",
           "-lglfw3dll",
           "-lopengl32",
-          "-lOpenAL32",
           "-lgdi32",
           "-luser32",
           "-lstdc++fs",
