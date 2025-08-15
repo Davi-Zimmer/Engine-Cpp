@@ -38,6 +38,12 @@ module.exports = {
                         "Interpreter.cpp",
                         "Logger.cpp"
                     ]
+                },
+
+                Managers: {
+                    files: [
+                        "EventManager.cpp"
+                    ]
                 }
             }
         },

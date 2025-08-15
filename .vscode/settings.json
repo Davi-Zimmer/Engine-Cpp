@@ -81,6 +81,9 @@
         "stop_token": "cpp",
         "text_encoding": "cpp",
         "variant": "cpp",
-        "expected": "cpp"
+        "expected": "cpp",
+        "flat_map": "cpp",
+        "flat_set": "cpp",
+        "stacktrace": "cpp"
     }
 }

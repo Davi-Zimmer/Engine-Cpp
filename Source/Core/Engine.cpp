@@ -2,6 +2,7 @@
 #include <thread>
 #include "../../Includes/Core/Engine.h"
 #include "../../Includes/Graphics/Canvas2D.h"
+#include "../../Includes/Managers/EventManager.h"
 
 #include <SFML/System.hpp>
 
@@ -46,12 +47,15 @@ void Engine::frameSkipper(GLFWwindow* window){
 
         float deltaTime = clock.restart().asSeconds();
         
+        EventManager::GetInstance()->processHoldKeys();
+
         render( window, deltaTime );
 
         fpsTimer += deltaTime;
         frameCount++;
         if (fpsTimer >= 1.0f) {
-            std::cout << "FPS: " << frameCount << std::endl;
+            //std::cout << "FPS: " << frameCount << std::endl;
+            FPS = frameCount;
             fpsTimer -= 1.0f;
             frameCount = 0;
         }
