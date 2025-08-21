@@ -16,26 +16,33 @@
 #include "../../Includes/Graphics/Shaders.h"
 
 
-Canvas2D::Canvas2D(): image(0, 0, 0) {
+
+Image* img = new Image(0, 0, 0);
+
+Canvas2D::Canvas2D() {
     shaders = Shaders();
-
-    xxx = 0;
-    yyy = 0;
-    www = 100;
-    hhh = 100;
-    n = 0;
-
+    game = Game::GetInstance();
+    // rtex = std::make_unique<sf::RenderTexture>();
 }
 
 void Canvas2D::renderConstructor(){
     
     shaders.init();
 
-    //std::string imgPath = getExecutablePath() + "\\test.png";
-    std::string imgPath = Utils::pathIn("\\tiles.png") ;
+    std::string imgPath = Utils::pathIn( "\\tiles.png" );  
 
-    image = loadTexture( imgPath.c_str() );
+    img = loadTexture( imgPath.c_str() );
 
+    /*
+    std::string path = Utils::pathIn("\\fonts\\test-font.ttf");
+    if (!font.loadFromFile( path )) {
+        std::cout << "Erro " << path;
+        throw "Fonte nao encontrada\n";
+    }
+    */
+    // rtex->create( canvasWidth, canvasHeight );
+    // std::cout << path << "\n"; 
+    game->init();
 }
 
 void Canvas2D::renderConfigs( GLFWwindow* window, double deltaTime ){
@@ -59,17 +66,27 @@ void Canvas2D::renderConfigs( GLFWwindow* window, double deltaTime ){
 void Canvas2D::render( GLFWwindow* window, double deltaTime ) {
     
     // setColor(255, 0, 0, 1);
+
     // rect(100, 100, 100, 100);
     // drawImage( &image, 100, -100, 100, 100 );
     
     // drawSprite( &image, 0, 0, 20, 20, 0, 0, 100, 100 );
 
-    image.setRotationZ( image.getRotationZ() + 1 * deltaTime );
-    image.setRotationY( image.getRotationY() + 1 * deltaTime );
-    image.setRotationX( image.getRotationX() + 1 * deltaTime );
+    // image.setRotationZ( image.getRotationZ() + 1 * deltaTime );
+    // image.setRotationY( image.getRotationY() + 1 * deltaTime );
+    // image.setRotationX( image.getRotationX() + 1 * deltaTime );
 
-    drawSprite( &image, 128, 0, 32, 32, 100, -100, 200, 200 );
+    //drawImage( &img, 0, 0, 100, 100 );
+
+    // drawSprite( &img, 128, 0, 32, 32, 100, -100, 200, 200 );
     
+    // drawSprite( &img, 0, 0, 100, 100, 100, -100, 200, 200 );
+
+
+    // write("testing", 50, 100, 20 );
+
+    game->update( this, deltaTime, *img );
+
 }
 
 
@@ -78,8 +95,7 @@ void Canvas2D::setCanvasSize( float w, float h ){
     canvasWidth = w;
     canvasHeight = h;
 
-    std::cout << w << " " << h << "\n";
-
+    //rtex->create( canvasWidth, canvasHeight );
 }
 
 float Canvas2D::toNdcX( float x ){
@@ -168,23 +184,22 @@ void Canvas2D::square( float x, float y, float size ){
     rect( x, y, size, size );
 }
 
-Image Canvas2D::loadTexture( const char* path ) {
+Image* Canvas2D::loadTexture( const char* path ) {
     
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(path, &width, &height, &nrChannels, 4);
+    
     if (!data) {
         std::cout << "Erro ao carregar imagem: " << path << "\n";
         
-
-        return Image( 0, 0, 0 );
+        return new Image( 0, 0, 0 );
     }
-    
+
     unsigned int texture;
     glGenTextures(1, &texture);
     // getchar();
     glBindTexture(GL_TEXTURE_2D, texture);
-    stbi_set_flip_vertically_on_load(true);
 
     // Parâmetros da textura
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
@@ -195,11 +210,13 @@ Image Canvas2D::loadTexture( const char* path ) {
     // Upload da textura para a GPU
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
+    
+    stbi_set_flip_vertically_on_load(false);
 
     stbi_image_free(data);
-
-    Image img( texture, width, height );
-
+    
+    Image* img = new Image( texture, width, height );
+    
     return img;
 }
 
@@ -223,7 +240,6 @@ void Canvas2D::drawImage( Image* img, float x, float y, float w, float h ) {
     glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
-    stbi_set_flip_vertically_on_load(true);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -338,3 +354,4 @@ void Canvas2D::drawSprite( Image* img, float sx, float sy, float sw, float sh, f
     // glDeleteBuffers(1, &VBO);
     // glDeleteBuffers(1, &EBO);
 }
+

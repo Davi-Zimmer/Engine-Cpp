@@ -21,24 +21,14 @@
 #include "../../includes/Managers/EventManager.h"
 #include "../../Includes/Audio/Audio.h"
 
-#include <windows.h>
-#include <mmsystem.h>
-#pragma comment(lib, "winmm.lib")
-
-void playDisatster(){
-    std::string path = Utils::pathIn( "\\audio.wav" );
-        
-    PlaySound( path.c_str(), NULL, SND_FILENAME | SND_ASYNC);
-}
-
 
 int main() {
 
-    // playDisatster();
-    
     Audio audio( Utils::pathIn("\\audio.wav").c_str() );
    
-    Engine engine;
+    Game* game = Game::GetInstance();
+
+    Engine engine( game );
 
     Window window( &engine );
 
@@ -50,37 +40,8 @@ int main() {
     
     EventManager* eventManager = EventManager::GetInstance();
 
-
     eventManager->addEvents( winGL );
     
-    
-    
-    /*
-    glfwSetWindowUserPointer(winGL, eventManager);
-    
-    glfwSetKeyCallback(winGL, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-        auto* em = static_cast<EventManager*>(glfwGetWindowUserPointer(window));
-        em->keyCallback(window, key, scancode, action, mods);
-    });
-    
-    glfwSetMouseButtonCallback(winGL, [](GLFWwindow* window, int button, int action, int mods) {
-        auto* em = static_cast<EventManager*>(glfwGetWindowUserPointer(window));
-        em->mouseButtonsCallback( window, button, action, mods );
-    });
-        
-    glfwSetCursorPosCallback(winGL, [](GLFWwindow* window, double xpos, double ypos) {
-        auto* em = static_cast<EventManager*>(glfwGetWindowUserPointer(window));
-        em->mouseMoveCallback(xpos, ypos);  // você implementa dentro do EventManager
-    });
-
-    glfwSetScrollCallback(winGL, [](GLFWwindow* window, double xoffset, double yoffset) {
-        auto* em = static_cast<EventManager*>(glfwGetWindowUserPointer(window));
-        em->scrollCallback(xoffset, yoffset);
-    });
-
-    */
-
-
     std::thread interpretadorThread([&interpreter]() {
         interpreter.start();
     });
@@ -94,9 +55,6 @@ int main() {
 
 }
 /*
+    fazer a aplicação da matriz de rotação direto na imagem e não quando for desenhar
 
-function splitCommand( stringCommand ){
-    const args = stringCommand.split(' ')
-    return args
-}
 */

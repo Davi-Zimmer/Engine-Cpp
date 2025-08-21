@@ -44,6 +44,31 @@ module.exports = {
                     files: [
                         "EventManager.cpp"
                     ]
+                },
+                
+                Game: {
+                    files: [
+                        "Game.cpp"
+                    ],
+
+                    folders: {
+                        
+                        Entities: {
+
+                            files: [
+                                "Entity.cpp"
+                            ]
+
+                        },
+
+                        Objects: {
+                            files: [
+                                "BaseObject.cpp"
+                            ]
+
+                        }
+
+                    } 
                 }
             }
         },

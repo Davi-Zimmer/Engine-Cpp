@@ -7,8 +7,9 @@
 #include <SFML/System.hpp>
 
 bool countFps = true;
+#include "../../Includes/Graphics/Canvas2D.h"
 
-Engine::Engine(){
+Engine::Engine( Game* g ){
 
     setFpsTarget( 60 );
     
@@ -18,6 +19,12 @@ Engine::Engine(){
     framesRendered = 0;
 
     ctx = Canvas2D();
+ 
+    game = g;
+
+    game->setCanvas( ctx );
+
+ 
     
 }
 
@@ -31,7 +38,6 @@ int Engine::getFpsTarget()
 {
     return targetFps;
 }
-
 
 void Engine::frameSkipper(GLFWwindow* window){
     ctx.renderConstructor();

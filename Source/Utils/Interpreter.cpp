@@ -122,7 +122,7 @@ void Interpreter::moveObj( std::vector< std::string > args ){
 
 
     if( args.size() < 3) {
-        std::cout << ctx->xxx << " " << ctx->yyy << "\n";
+        //std::cout << ctx->xxx << " " << ctx->yyy << "\n";
         printLine( "Precisa de 2 parametros" );
         return;
     }
@@ -130,10 +130,10 @@ void Interpreter::moveObj( std::vector< std::string > args ){
     int x = std::stoi( args[1] );
     int y = std::stoi( args[2] );
     
-    ctx->xxx = x;
-    ctx->yyy = y;
+    // ctx->xxx = x;
+    // ctx->yyy = y;
 
-    std::cout << ctx->xxx << " " << ctx->yyy << "\n";
+    // std::cout << ctx->xxx << " " << ctx->yyy << "\n";
 
 }
 
@@ -141,7 +141,7 @@ void Interpreter::moveObj( std::vector< std::string > args ){
 void Interpreter::resizeeObj( std::vector< std::string > args ){
 
     if( args.size() < 3) {
-        std::cout << ctx->www << " " << ctx->hhh << "\n";
+        // std::cout << ctx->www << " " << ctx->hhh << "\n";
 
         printLine( "Precisa de 2 parametros" );
         return;
@@ -150,10 +150,10 @@ void Interpreter::resizeeObj( std::vector< std::string > args ){
     int w = std::stoi( args[1] );
     int h = std::stoi( args[2] );
     
-    ctx->www = w;
-    ctx->hhh = h;
+    // ctx->www = w;
+    // ctx->hhh = h;
 
-    std::cout << ctx->www << " " << ctx->hhh << "\n";
+    // std::cout << ctx->www << " " << ctx->hhh << "\n";
 }
 
 void Interpreter::getFpsLixo(){

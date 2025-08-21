@@ -6,6 +6,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "../Graphics/Canvas2D.h"
+#include "../Game/Game.h"
 
 class Engine {
 
@@ -20,12 +21,14 @@ class Engine {
 
         float FPS = 0;
 
+        Game* game;
+
         Canvas2D ctx;
 
         std::chrono::_V2::system_clock::time_point lastTime;
         std::chrono::_V2::system_clock::time_point fpsTimer;
 
-        Engine();
+        Engine( Game* g );
 
         int setFpsTarget( int fps );
         
