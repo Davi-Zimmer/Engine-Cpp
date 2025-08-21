@@ -2,34 +2,33 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <SFML/Graphics.hpp>
+
 #include "Image.h"
 #include "Shaders.h"
+class Game;
+
+#include "../Game/Game.h"
 
 struct rgba {
     float r, g, b, a;
 };
 
+
 class Canvas2D {
         public:
     Canvas2D();
     
-    float xxx;
-    float yyy;
-    float www;
-    float hhh;
-    float n;
-
-    Image image;
     Shaders shaders;
-
-
-    // unsigned int compileShader( unsigned int type, const char* source );
-    // unsigned int createShaderProgram( unsigned int vertexShader, unsigned int fragmentShader );
+    Game* game;
     
 
     void renderConstructor();
     void renderConfigs( GLFWwindow* window, double deltaTime );
     void render( GLFWwindow* window, double deltaTime );
+
+    // std::unique_ptr<sf::RenderTexture> rtex;
+    // sf::Font font;
 
     void setCanvasSize( float w, float h );
 
@@ -47,10 +46,9 @@ class Canvas2D {
 
     void square( float x, float y, float size );
 
-
     rgba hexToRgba( char* hex );
 
-    Image loadTexture(const char* path);
+    Image* loadTexture( const char* path );
 
     void drawImage( Image* img, float x, float y, float w, float h);
     
@@ -65,5 +63,8 @@ class Canvas2D {
 
     float canvasWidth;
     float canvasHeight;
+
+
+    void write(const std::string& text, float x, float y, unsigned int size, sf::Color color );
 
 };

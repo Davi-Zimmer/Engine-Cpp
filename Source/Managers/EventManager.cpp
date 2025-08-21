@@ -9,6 +9,7 @@ EventManager* EventManager::Instance;
 EventManager::EventManager(){
 
 
+    /*
     onKeyDown( GLFW_KEY_W, [](){
         std::cout << "press W\n";
     });
@@ -40,6 +41,7 @@ EventManager::EventManager(){
     onMouseMove( [](){
         std::cout << "mouse move\n";
     });
+    */
     
 }
 
